@@ -4,6 +4,7 @@
 - [Function](#Function)
 - [Flags](#Flags)
 - [Regex](#Regex)
+- [Example](#Example)
 
 ***
 
@@ -129,37 +130,19 @@ re.sub(pattern, repl, string, count=1)  // 1-2345
 <td>1</td>
 <td>re.I</td>
 <td>re.IGNORECASE</td>
-<td> 忽略大小寫 </td>
+<td> 忽略大小寫。 </td>
 </tr>
 <tr>
 <td>2</td>
 <td>re.M</td>
 <td>MULTILINE</td>
-<td> 多行模式，pattern'^'、'$' 變為多行的 </td>
+<td> 多行模式，pattern'^'、'$' 變為多行的。 </td>
 </tr>
 <tr>
 <td>3</td>
 <td>re.S</td>
 <td>DOTALL</td>
-<td> 例子：re.findall(&lt;p&gt;.*&lt;/p&gt;", string, re.DOTALL) </td>
-</tr>
-<tr>
-<td>4</td>
-<td>re.L</td>
-<td>LOCALE</td>
-<td> 使預定字符類 \w \W \b \B \s \S 取決於當前區域設定  </td>
-</tr>
-<tr>
-<td>5</td>
-<td>re.U</td>
-<td>UNICODE</td>
-<td> re.U(UNICODE): 使預定字符類 \w \W \b \B \s \S \d \D 取決於unicode定義的字符屬性  </td>
-</tr>
-<tr>
-<td>6</td>
-<td>re.X</td>
-<td>VERBOSE</td>
-<td> 詳細模式。這個模式下正則表達式可以是多行，忽略空白字符，並可以加入註釋 </td>
+<td> 可以把隔行變為 \n 去 search。 </td>
 </tr>
 </table>
 
@@ -167,15 +150,128 @@ re.sub(pattern, repl, string, count=1)  // 1-2345
 
 ### Regex
 
-re 字符用法：
+Triple dots and space:
+<pre>
+string = "... something"
+re.findall('\d+', string) // ['123']
+</pre>
 
-https://chwang12341.medium.com/%E7%B5%A6%E8%87%AA%E5%B7%B1%E7%9A%84python%E5%B0%8F%E7%AD%86%E8%A8%98-%E5%BC%B7%E5%A4%A7%E7%9A%84%E6%95%B8%E6%93%9A%E8%99%95%E7%90%86%E5%B7%A5%E5%85%B7-%E6%AD%A3%E5%89%87%E8%A1%A8%E9%81%94%E5%BC%8F-regular-expression-regex%E8%A9%B3%E7%B4%B0%E6%95%99%E5%AD%B8-a5d20341a0b2
+常用 re 字符：
 
-以下是一些常用的 Regex 及例子：
+1. [...] 只要出現在括號內都 match
+<pre>
+string = "112233"
+pattern1 = "[123]" //re.findall result: ['1', '1', '2', '2', '3', '3']
+pattern2 = "[123]" //re.findall result: ['12']
 
-(資料來源：https://blog.hsdn.net/1391.html)
+[a-z]  - > 所有細階字母
+[A-Z]  - > 所有大階字母
+[0-9]  - > 所有數字
+[^0-9] - > 除了數字
+</pre>
 
-檢查網址
+2. 位置上的 match (^ $)
+<pre>
+string = "abc"
+^ 例子
+pattern1 = "^a" // ^例子re.search result: a
+$ 例子
+pattern2 = "c$" // re.search result: c
+</pre>
+
+3. ^ vs \A and $ vs \Z
+<pre>
+when you only need to match the start of a string regardless of any modifiers, use \A.
+差別在於 \A 及 \Z 不受 multi-line mode 影響
+
+re.search('^abc', 'firstline\nabc', re.M)  
+>> abc
+re.search('\Aabc', 'firstline\nabc', re.M) 
+>> 
+</pre>
+
+4. 數量上的 match
+<table>
+<tr>
+<th> symbol </th>
+<th> description </th>
+</tr>
+<tr>
+<td> * </td>
+<td> 大過等於 0 個 </td>
+</tr>
+<tr>
+<td> + </td>
+<td> 大過 0 個 </td>
+</tr>
+<tr>
+<td> ？ </td>
+<td> 0 或 1 個 </td>
+</tr>
+<tr>
+<td> {n} </td>
+<td> n 個 </td>
+</tr>
+<tr>
+<td> {n,} </td>
+<td> 大過等於 n 個 </td>
+</tr>
+<tr>
+<td> {n, m} </td>
+<td> n 到 m 個 </td>
+</tr>
+</table>
+<pre>
+re.search('abcd?', 'abcd').group() 
+>> abcd
+re.search('abcd?', 'abc').group() 
+>> abc
+re.findall('abcd{2,4}', 'abcdddddabcdd')
+>> ['abcdddd', 'abcdd']
+條件是 abcdd, abcddd, abcdddd，結果以重覆最多的顯示
+</pre>
+
+5. 組合及 or
+<pre>
+or 用法：
+re.search('a|b', 'a').group()
+>> a
+re.findall('a|b', 'ab')
+>> ['a', 'b']
+
+組合 (...) 用法：
+re.search('(abc){2}', 'aabbccabcabc').group()
+>> 'abcabc'
+</pre>
+
+5. 組合特姝用法：
+- (?:re...) - 當不需要中間的值時用，例如：
+<pre>
+re.findall('(\d+)(?:abc)(\d+)', '123abc456abc888abc999')
+>> [('123', '456'), ('888', '999')]
+# list of tuple
+</pre>
+- a(?=\d) - a 後面一定要係數字
+- a(?!=\d) - a 後面一定唔係數字
+- (?<=\d)a - a 前面一定係數字
+- (?<!\d)a - a 前面不能是數字
+
+6. 其他特別字符
+<pre>
+\f (換頁), \n (換行), \r (Enter鍵), \t (Tab鍵), \\ (\)
+</pre>
+
+7. 提示
+> 盡可能 match 較少的字，例如：.*? ， ? ，可以令結果不會重覆
+<pre>
+re.search('go{2,4}?','good')
+// goo
+re.search('go{2,4}?','goooood')
+// goooo
+</pre>
+
+### Example
+網址：
 <pre>
 ‘/^(((http|https|ftp):\/\/)?([[a-zA-Z0-9]\-\.])+(\.)([[a-zA-Z0-9]]){2,4}([[a-zA-Z0-9]\/+=%&_\.~?\-]*))*$/’
 </pre>

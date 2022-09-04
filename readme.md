@@ -167,13 +167,16 @@ re.sub(pattern, repl, string, count=1)  // 1-2345
 
 ### Regex
 
+re 字符用法：
+
+https://chwang12341.medium.com/%E7%B5%A6%E8%87%AA%E5%B7%B1%E7%9A%84python%E5%B0%8F%E7%AD%86%E8%A8%98-%E5%BC%B7%E5%A4%A7%E7%9A%84%E6%95%B8%E6%93%9A%E8%99%95%E7%90%86%E5%B7%A5%E5%85%B7-%E6%AD%A3%E5%89%87%E8%A1%A8%E9%81%94%E5%BC%8F-regular-expression-regex%E8%A9%B3%E7%B4%B0%E6%95%99%E5%AD%B8-a5d20341a0b2
+
 以下是一些常用的 Regex 及例子：
 
-檢整網址:
-https://blog.hsdn.net/1391.html
-<pre>
-pattern = r'/^(((http|https|ftp):\/\/)?([[a-zA-Z0-9]\-\.])+(\.)([[a-zA-Z0-9]]){2,4}([[a-zA-Z0-9]\/+=%&_\.~?\-]*))*$/’
-</pre>
+(資料來源：https://blog.hsdn.net/1391.html)
 
-https://5xruby.tw/posts/15min-regular-expression
+檢查網址
+<pre>
+‘/^(((http|https|ftp):\/\/)?([[a-zA-Z0-9]\-\.])+(\.)([[a-zA-Z0-9]]){2,4}([[a-zA-Z0-9]\/+=%&_\.~?\-]*))*$/’
+</pre>
 
